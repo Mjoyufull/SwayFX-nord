@@ -1,0 +1,239 @@
+# Variables
+set $scripts ~/.scripts
+set $configs ~/.config/hypr/configs
+set $themes ~/.config/hypr/themes
+set $volume ~/.scripts/volume
+
+# Main modifier
+set $mod Mod4
+
+# Application shortcuts
+set $term kitty
+set $fileManager thunar
+set $menu rofi -show drun -theme ~/.config/rofi/themes/nord.rasi
+
+# Reload
+  bindsym $mod+Shift+c exec swaymsg reload
+
+# Style
+default_border pixel 3
+default_floating_border none
+font pango:jetbrainsmono nerd font 0.001
+titlebar_padding 1
+titlebar_border_thickness 0
+
+gaps inner 5
+gaps outer 3
+smart_gaps off
+smart_borders off
+
+#swayfx decor
+shadows enable
+shadows_on_csd enable
+shadow_blur_radius 20
+blur enable
+blur passes 1
+blur_radius 3
+blur_noise 1
+default_dim_inactive 0.08
+
+# Window decoration
+client.focused          #99bce2 #434c5e #eceff4 #99bce2   #99bce2
+client.focused_inactive #99bce2 #2e3440 #d8dee9 #4c566a   #4c566a
+client.unfocused        #4c566a #2e3440 #d8dee9 #4c566a   #4c566a
+client.urgent           #4c566a #ebcb8b #2e3440 #8fbcbb   #ebcb8b
+
+# XDG Desktop Portal and Environment
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
+
+# Authentication and Security
+exec /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
+exec gnome-keyring-daemon --start --components=secrets,pkcs11,ssh
+
+# Touchpad configuration
+input "type:touchpad" {
+    dwt enabled
+    tap enabled
+    natural_scroll enabled
+    middle_emulation enabled
+}
+
+# Output configuration
+output * 
+
+
+# System Services
+exec_always systemctl --user import-environment
+exec_always systemctl --user restart xdg-desktop-portal
+exec_always systemctl --user restart xdg-desktop-portal-wlr
+
+# Window Rules
+for_window [class=".*"] border normal 2
+for_window [app_id=".*"] border normal 2
+
+# Large centered floating windows
+for_window [class="(?i)Geeqie|celluloid|mpv|imv" title="File Upload"] floating enable
+for_window [class="(?i)Geeqie|celluloid|mpv|imv" title="File Upload"] resize set 70 ppt 70 ppt
+for_window [class="(?i)Geeqie|celluloid|mpv|imv" title="File Upload"] move position center
+
+# Medium centered floating windows
+for_window [app_id="file-roller|FileRoller|blueman-manager|blueberry.py"] floating enable
+for_window [app_id="file-roller|FileRoller|blueman-manager|blueberry.py"] resize set 50 ppt 50 ppt
+for_window [app_id="file-roller|FileRoller|blueman-manager|blueberry.py"] move position center
+
+# Dialog windows and file pickers
+for_window [title="Open Folder|Open File|Save File|Save Folder|Save Image|Library|Save As|Open As|Volume Control|Settings|Warning|nmtui|update.sh"] floating enable
+for_window [title="Open Folder|Open File|Save File|Save Folder|Save Image|Library|Save As|Open As|Volume Control|Settings|Warning|nmtui|update.sh"] resize set 50 ppt 50 ppt
+for_window [title="Open Folder|Open File|Save File|Save Folder|Save Image|Library|Save As|Open As|Volume Control|Settings|Warning|nmtui|update.sh"] move position center
+
+# Small centered floating windows
+for_window [app_id="galculator|ytdlp-gui"] floating enable
+for_window [app_id="galculator|ytdlp-gui"] resize set 30 ppt 40 ppt
+for_window [app_id="galculator|ytdlp-gui"] move position center
+
+# System dialogs and notifications
+for_window [app_id="xfce-polkit|file_progress|dialog|download|notification|error|splash|confirmreset|wleave|nwg-look|nm-connection-editor"] floating enable
+for_window [title="branchdialog|Picture-in-Picture"] floating enable
+for_window [title="Picture-in-Picture"] resize set 30 ppt 30 ppt
+
+# Steam rules
+for_window [class="steam" title="^$"] floating enable
+for_window [title="Friends List"] floating enable
+for_window [title="Friends List"] resize set 30 ppt 60 ppt
+
+# Browser Picture-in-Picture
+for_window [app_id="floorp" title="Picture-in-Picture"] floating enable
+for_window [app_id="firefox" title="Picture-in-Picture"] floating enable
+
+# Terminal rules
+for_window [app_id="kitty"] floating enable
+for_window [app_id="kitty"] resize set 40 ppt 50 ppt
+
+# Rofi rules
+for_window [app_id="rofi"] floating enable
+for_window [title="drun|rofi"] floating enable
+
+exec export QT_QPA_PLATFORMTHEME=qt5ct
+
+# Workspace assignments
+assign [class="vesktop|discord"] → workspace number 1
+assign [class="brave|firefox"] → workspace number 2
+
+
+# Layout stuff:
+# Split
+  bindsym $mod+b splith
+  bindsym $mod+d splitv
+
+# Toogles
+  bindsym $mod+s layout stacking
+  bindsym $mod+w layout tabbed
+  bindsym $mod+f layout toggle split
+
+
+
+# Common keybinds
+bindsym $mod+q kill
+bindsym $mod+Shift+Alt+Delete exec swaymsg exit
+bindsym $mod+v floating toggle
+bindsym $mod+l exec swaylock
+bindsym $mod+m exec wlogout -b 5
+bindsym $mod+Alt+Return fullscreen
+bindsym $mod+a exec pavucontrol
+bindsym $mod+c exec cliphist list | rofi -dmenu | cliphist decode | wl-copy
+bindsym $mod+alt+o exec /home/chris/.config/sway/scripts/trigger_prev_wallpaper.sh
+bindsym $mod+alt+p exec /home/chris/.config/sway/scripts/trigger_next_wallpaper.sh 
+# Waybar
+bindsym Control+Escape exec pkill waybar; exec waybar
+
+# Application launches
+bindsym $mod+Return exec $term
+bindsym $mod+e exec $fileManager
+bindsym $mod+r exec $menu
+
+# Focus movement
+bindsym $mod+Left focus left
+bindsym $mod+Right focus right
+bindsym $mod+Up focus up
+bindsym $mod+Down focus down
+
+# Window movement
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Down move down
+
+# Workspace switching
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+# Move containers to workspace
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Shift+0 move container to workspace number 10
+
+# Resizing
+bindsym $mod+Alt+Left resize shrink width 40px
+bindsym $mod+Alt+Right resize grow width 40px
+bindsym $mod+Alt+Up resize shrink height 40px
+bindsym $mod+Alt+Down resize grow height 40px
+
+# Screenshots
+bindsym $mod+alt+N exec  /home/chris/.config/hypr/scripts/screenshot.sh
+bindsym $mod+Print exec grim -g "$(slurp)" - | swappy -f -
+
+# Audio control
+bindsym --locked XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym --locked XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym --locked XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym --locked XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+# Brightness control
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+
+# Autostart
+exec swww-daemon
+exec udiskie
+exec mako
+exec_always $HOME/bin/import-gsettings
+exec /home/chris/.config/sway/scripts/wallpaper_slideshow_pid.sh
+
+# Clipboard configuration
+exec wl-paste --type text --watch cliphist store    # Store text data
+exec wl-paste --type image --watch cliphist store   # Store image data
+
+# Cursor Theme
+seat seat0 xcursor_theme Dot-Light 24
+
+# Focus behavior
+focus_follows_mouse yes
+focus_on_window_activation focus
+
+# Bar configuration
+bar {
+    swaybar_command waybar
+}
+
+# Floating windows
+floating_modifier $mod normal
+
+include /etc/sway/config.d/*
